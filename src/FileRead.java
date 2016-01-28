@@ -2,8 +2,11 @@ import au.com.bytecode.opencsv.CSVReader;
 
 import java.io.FileReader;
 import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 
 
 public class FileRead {
@@ -13,21 +16,27 @@ public class FileRead {
     ArrayList newArray = new ArrayList();
     String[] splitData;
     String input;
-    int index ;
+    int index;
     private double average;
+    Map<String, Integer> map = new HashMap<String, Integer>();
+    private ArrayList<String> a;
 
     public static void main(String[] args) {
         FileRead data = new FileRead();
         data.parseData("case beat", 5);
         System.out.println();
         data.parseData("community area", 8);
+        data.parseData("primary type", 0);
+        data.parseData("desciption", 1);
+        data.parseData("arrest", 3);
 
     }
 
-    public void parseData(String s, int i){
+    public void parseData(String s, int i) {
         CSVReader bufferReader = null;
         beatCasesArray.clear();
         newArray.clear();
+
         input = s;
         index = i;
         try {
@@ -50,12 +59,19 @@ public class FileRead {
                 e.printStackTrace();
             }
         }
-        getMax();
-        getMin();
-        findMedian();
-        findMean();
-        findStandardDeviation();
+
+        if (input.equals("case beat") || input.equals("community area")) {
+            getMax();
+            getMin();
+            findMedian();
+            findMean();
+            findStandardDeviation();
+        } else {
+            frequence();
+
+        }
     }
+
     public ArrayList<String> splitCSVToArray(String csv) {
         if (csv != null) {
             splitData = csv.split("\\s*,\\s*");
@@ -67,6 +83,34 @@ public class FileRead {
         }
 
         return beatCasesArray;
+    }
+
+    public void frequence() {
+        a = new ArrayList<String>();
+
+        for (int i = 1; i < beatCasesArray.size(); i++) {
+            if (map.containsKey(beatCasesArray.get(i))) {
+                map.put(beatCasesArray.get(i), map.get(beatCasesArray.get(i)) + 1);
+            } else {
+                map.put(beatCasesArray.get(i), 1);
+            }
+
+        }
+        for (Object k : map.keySet()) {
+            a.add((String) k);
+        }
+        System.out.println(map);
+        DecimalFormat df = new DecimalFormat(("#.00"));
+        for (int i = 0; i < map.size(); i++) {
+            double value = (map.get(a.get(i)));
+            value = (value / beatCasesArray.size()) * 100;
+            String newValue = df.format(value);
+
+            System.out.println("The percentage of " + a.get(i) + " is " + newValue + "%");
+        }
+
+        map.clear();
+        a.clear();
     }
 
 
@@ -81,7 +125,6 @@ public class FileRead {
         System.out.println("The maximum Value for Beat cases " + max);
 
     }
-
 
 
     public void getMin() {
@@ -131,14 +174,13 @@ public class FileRead {
         double variance = 0;
         for (Object a : newArray) {
             temp += (mean - Double.parseDouble(String.valueOf(a)) * (mean - Double.parseDouble(String.valueOf(a))));
-             variance = temp / newArray.size();
-            double number = variance/2;
+            variance = temp / newArray.size();
+            double number = variance / 2;
 
         }
         System.out.println("The standard deviation for" + input + "is " + Math.sqrt(variance));
 
     }
-
 
 
 }
