@@ -23,9 +23,9 @@ public class FileRead {
 
     public static void main(String[] args) {
         FileRead data = new FileRead();
-        data.parseData("case beat", 5);
+        data.parseData("Cases Beat", 5);
         System.out.println();
-        data.parseData("community area", 8);
+        data.parseData("Community Area", 8);
         data.parseData("primary type", 0);
         data.parseData("desciption", 1);
         data.parseData("arrest", 3);
@@ -60,7 +60,7 @@ public class FileRead {
             }
         }
 
-        if (input.equals("case beat") || input.equals("community area")) {
+        if (input.equals("Cases Beat") || input.equals("Community Area")) {
             getMax();
             getMin();
             findMedian();
@@ -144,7 +144,7 @@ public class FileRead {
 
     public void findMedian() {
         Arrays.sort(new ArrayList[]{newArray});
-        System.out.println(newArray.size());
+        System.out.println("" + newArray.size());
         int middle = newArray.size() / 2;
         int medianValue = 0;
         if (newArray.size() % 2 == 1) {
@@ -152,7 +152,7 @@ public class FileRead {
         } else {
             medianValue = (Integer.parseInt((String) newArray.get(middle - 1)) + Integer.parseInt((String) newArray.get(middle))) / 2;
         }
-        System.out.println(medianValue);
+        System.out.println("Median: " + medianValue);
     }
 
     public void findMean() {
@@ -162,7 +162,7 @@ public class FileRead {
             sum = sum + Integer.parseInt(String.valueOf(newArray.get(i)));
 
         average = sum / newArray.size();
-        System.out.println(average);
+        System.out.println("Mean: " + average);
 
     }
 
