@@ -99,15 +99,16 @@ public class FileRead {
         for (Object k : map.keySet()) {
             a.add((String) k);
         }
-        System.out.println(map);
+       // System.out.println(map);
         DecimalFormat df = new DecimalFormat(("#.00"));
         for (int i = 0; i < map.size(); i++) {
             double value = (map.get(a.get(i)));
             value = (value / beatCasesArray.size()) * 100;
             String newValue = df.format(value);
 
-            System.out.println("The percentage of " + a.get(i) + " is " + newValue + "%");
+            System.out.println(a.get(i) + " is " + newValue + "%" +" frequency: "+ map.get(a.get(i)));
         }
+        System.out.println("______________________________________________");
 
         map.clear();
         a.clear();
@@ -122,7 +123,7 @@ public class FileRead {
                 max = number;
             }
         }
-        System.out.println("The maximum Value for Beat cases " + max);
+        System.out.println("The maximum Value for "+input +" " + max);
 
     }
 
@@ -137,7 +138,7 @@ public class FileRead {
                 min = number;
             }
         }
-        System.out.println("The maximum Value for Beat cases " + min);
+        System.out.println("The minimum Value for "+input +" " + min);
 
     }
 
