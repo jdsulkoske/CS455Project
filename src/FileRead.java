@@ -23,12 +23,12 @@ public class FileRead {
 
     public static void main(String[] args) {
         FileRead data = new FileRead();
-        data.parseData("Case beat", 5);
+        data.parseData("Case beat", 3);
         System.out.println();
-        data.parseData("Community Area", 8);
+        data.parseData("Community Area", 4);
         data.parseData("Primary Type", 0);
         data.parseData("Desciption", 1);
-        data.parseData("Arrest", 3);
+        data.parseData("Arrest", 2);
 
     }
 
@@ -61,7 +61,7 @@ public class FileRead {
             }
         }
 
-        if (input.equals("case beat") || input.equals("community area")) {
+        if (input.equals("Case beat") || input.equals("Community Area")) {
             getMax();
             getMin();
             findMedian();
