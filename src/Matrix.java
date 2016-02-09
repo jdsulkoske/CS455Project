@@ -32,8 +32,8 @@ public class Matrix {
 
     public void parseData(String input, int index) {
         CSVReader bufferReader = null;
-        //csvDataArray.clear();
-        //newArray.clear();
+        csvDataArray.clear();
+        newArray.clear();
 
         this.input = input;
         this.index = index;
@@ -45,12 +45,13 @@ public class Matrix {
 
             while ((line = bufferReader.readNext()) != null) {
                 for(int i= 0;i<line.length;i++) {
-                    splitCSVToArray(line[i]);
+                        splitCSVToArray(line[i]);
 
 
                 }
-                findFrequency();
+                    findFrequency();
             }
+
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -93,17 +94,16 @@ public class Matrix {
             keyValueArray.add((String) k);
         }
 
-        //map.clear();
-        //keyValueArray.clear();
+        map.clear();
+        keyValueArray.clear();
     }
 
-    public int [][]getMatrix(){
-        int[][] randomMatrix = new int [1001][4];
+    public String[][] getMatrix(){
+        String [][] randomMatrix = new String [1001][4];
         for (int i = 1; i < 1001; i++) {
-            for(int j=0;j<4;j++) {
-
+            for(int j=0;j<1;j++) {
                 //System.out.println(i + ". " + map.get(csvDataArray.get(i)));
-                randomMatrix[i][j]=map.get(csvDataArray.get(i));
+                randomMatrix[i][j]=csvDataArray.get(i);
             }
         }
         return randomMatrix;
@@ -126,7 +126,7 @@ public class Matrix {
         return randomMatrix;
     }
 
-    public void printGraph(int[][] array) {
+    public void printGraph(String[][] array) {
         for (int i = 0; i < 1001; i++) {
             for (int j = 0; j < 4; j++) {
                 System.out.print(array[i][j]+"|");
