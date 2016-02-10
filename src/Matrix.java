@@ -2,10 +2,7 @@ import au.com.bytecode.opencsv.CSVReader;
 
 import java.io.FileReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 /**
  * Created by FarisShatat on 2/9/16.
@@ -20,6 +17,7 @@ public class Matrix {
     private double average;
     Map<String, Integer> map = new HashMap<String, Integer>();
     private ArrayList<String> keyValueArray;
+    String[][] dataArr;
 
     public static void main(String[] args) {
         Matrix data = new Matrix();
@@ -43,14 +41,21 @@ public class Matrix {
             bufferReader = new CSVReader(new FileReader("src/CSV2.csv"));
 
 
-            while ((line = bufferReader.readNext()) != null) {
-                for(int i= 0;i<line.length;i++) {
-                        splitCSVToArray(line[i]);
+            //while ((line = bufferReader.readNext()) != null) {
+                List<String[]> list = bufferReader.readAll();
+
+// Convert to 2D array
+                 dataArr = new String[list.size()][];
+                dataArr = list.toArray(dataArr);
+                printGraph(dataArr);
+           // System.out.print(dataArr);
+                //for(int i= 0;i<line.length;i++) {
+                       // splitCSVToArray(line[i]);
 
 
-                }
-                    findFrequency();
-            }
+               // }
+                //    findFrequency();
+          //  }
 
 
         } catch (IOException e) {
@@ -62,9 +67,9 @@ public class Matrix {
                 e.printStackTrace();
             }
         }
-        while (i < 1001) {
-            printGraph(getMatrix());
-        }
+        //while (i < 1001) {
+
+       // }
 
     }
     public ArrayList<String> splitCSVToArray(String csv) {
@@ -100,13 +105,16 @@ public class Matrix {
     }
 
     public String[][] getMatrix(){
-        String [][] randomMatrix = new String [1001][4];
+        String[][] randomMatrix = new String [1001][4];
         for (int i = 1; i < 1001; i++) {
             for(int j=0;j<1;j++) {
                 //System.out.println(i + ". " + map.get(csvDataArray.get(i)));
-                randomMatrix[i][j]=csvDataArray.get(i);
+
+                    randomMatrix[i][j] = csvDataArray.get(i);
+
             }
         }
+
         return randomMatrix;
     }
 
@@ -129,15 +137,20 @@ public class Matrix {
     int i = 0;
     public void printGraph(String[][] array) {
         int l = 0;
-        while (l<4) {
-            for (int j = 0; j < 1; j++) {
-                System.out.print(array[i][j] + "|");
+        //while (l<4) {
+        for(int i=0;i<1000;i++) {
+            for (int j = 0; j < 4; j++) {
+                if(array[i][j]!=null) {
+                    System.out.print(array[i][j] + "|");
+                }
 
             }
-            l++;
-            i++;
-        }
-        System.out.println();
+            System.out.println();
+            //l++;
+        }  /// / i++;
 
-    }
+        }
+
+
+
 }
