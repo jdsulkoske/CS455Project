@@ -62,8 +62,9 @@ public class Matrix {
                 e.printStackTrace();
             }
         }
-
-        printGraph(getMatrix());
+        while (i < 1001) {
+            printGraph(getMatrix());
+        }
 
     }
     public ArrayList<String> splitCSVToArray(String csv) {
@@ -125,13 +126,18 @@ public class Matrix {
 
         return randomMatrix;
     }
-
+    int i = 0;
     public void printGraph(String[][] array) {
-        for (int i = 0; i < 1001; i++) {
-            for (int j = 0; j < 4; j++) {
-                System.out.print(array[i][j]+"|");
+        int l = 0;
+        while (l<4) {
+            for (int j = 0; j < 1; j++) {
+                System.out.print(array[i][j] + "|");
+
             }
-            System.out.println();
+            l++;
+            i++;
         }
+        System.out.println();
+
     }
 }
