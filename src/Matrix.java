@@ -38,7 +38,7 @@ public class Matrix {
             dataArr = list.toArray(dataArr);
             printCSV1(randomMatrix());
             printCSV2(getMatrix());
-
+            printCSV3(getSimilarity());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -51,14 +51,68 @@ public class Matrix {
         }
 
     }
+    public double[][] getMatrix() {
+        assignNumberValueToKey();
+        double[][] matrix = new double[1000][4];
+        for (int i = 1; i < 1000; i++) {
+            for (int j = 0; j < 4; j++) {
+                matrix[i][j] = map.get(dataArr[i][j]);
+            }
+        }
+
+        return matrix;
+    }
+
+    public double [][] getSimilarity(){
+        assignNumberValueToKey();
+        double[][] matrix = new double[1000][1000];
+        double similarity =0;
+        double temp =0;
+        for(int i =1;i<1000;i++){
+            for (int j =1;j<1000;j++) {
+                for (int k = 0; k < 4; k++) {
+                    if (j == dataArr.length + 1) {
+
+                    } else {
+                        double subtractObjects = (map.get(dataArr[i][k]) - map.get(dataArr[j][k]));
+
+                            temp = (.25) * subtractObjects;
 
 
+                        similarity = +temp;
+
+                    }
+
+                }
+                DecimalFormat df = new DecimalFormat(("#.00"));
+                similarity = Double.parseDouble(df.format(similarity));
+                matrix[i][j] = Math.abs(similarity);
+            }
+
+        }
+        return matrix;
+    }
+
+
+    public String[][] randomMatrix() {
+        String[][] matrix = new String[1000][4];
+        Random rand = new Random();
+        for (int i = 0; i < 1000; i++) {
+            for (int j = 0; j < 4; j++) {
+                Integer r = rand.nextInt(dataArr.length);
+                matrix[i][j] = dataArr[r][j];
+            }
+
+        }
+
+        return matrix;
+    }
     public void assignNumberValueToKey() {
         keyValueArray = new ArrayList<String>();
         double count = 0;
         int min = getMin();
         int max = getMax();
-        for (int i = 0; i < dataArr.length; i++) {
+        for (int i = 1; i < dataArr.length; i++) {
             for (int j = 0; j < 4; j++) {
                 if (map.containsKey(dataArr[i][j])) {
                     if (j == 3) {
@@ -68,6 +122,7 @@ public class Matrix {
                         normalize = Double.parseDouble(df.format(normalize));
                         map.put(dataArr[i][j], normalize);
                     }
+
                     if (dataArr[i][j].equals("TRUE")) {
                         map.put(dataArr[i][j], 1.0);
 
@@ -86,7 +141,6 @@ public class Matrix {
 
 
         }
-
         for (Object k : map.keySet()) {
             keyValueArray.add((String) k);
         }
@@ -167,33 +221,6 @@ public class Matrix {
         }
     }
 
-    public double[][] getMatrix() {
-        assignNumberValueToKey();
-        double[][] randomMatrix = new double[1000][4];
-        for (int i = 1; i < 1000; i++) {
-            for (int j = 0; j < 4; j++) {
-                randomMatrix[i][j] = map.get(dataArr[i][j]);
-            }
-        }
-
-        return randomMatrix;
-    }
-
-
-    public String[][] randomMatrix() {
-        String[][] randomMatrix = new String[1000][4];
-        Random rand = new Random();
-        for (int i = 0; i < 1000; i++) {
-            for (int j = 0; j < 4; j++) {
-                Integer r = rand.nextInt(dataArr.length);
-                randomMatrix[i][j] = dataArr[r][j];
-            }
-
-        }
-
-        return randomMatrix;
-    }
-
 
     public void printCSV2(double[][] array) throws IOException {
         BufferedWriter br = new BufferedWriter(new FileWriter("CSV2.csv"));
@@ -221,6 +248,25 @@ public class Matrix {
 
         for (int i = 1; i < 1000; i++) {
             for (int j = 0; j < 4; j++) {
+                System.out.print(array[i][j] + ", ");
+                sb.append(array[i][j]);
+                sb.append(",");
+
+            }
+            sb.append("\n");
+            System.out.println();
+
+        }
+        br.write(sb.toString());
+        br.close();
+
+    }
+
+    public void printCSV3(double[][] array) throws IOException {
+        BufferedWriter br = new BufferedWriter(new FileWriter("CSV3.csv"));
+        StringBuilder sb = new StringBuilder();
+        for (int i = 1; i < 1000; i++) {
+            for (int j = 1; j < 1000; j++) {
                 System.out.print(array[i][j] + ", ");
                 sb.append(array[i][j]);
                 sb.append(",");
