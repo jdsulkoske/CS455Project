@@ -17,12 +17,13 @@ public class Matrix {
     Map<String, Double> map = new HashMap<String, Double>();
     private ArrayList<String> keyValueArray;
     String[][] dataArr;
-  public static void main(String[] args) {
+    private BufferedWriter br;
+    private StringBuilder sb;
+
+    public static void main(String[] args) {
         Matrix data = new Matrix();
         data.parseData();
         System.out.println();
-
-
     }
 
     public void parseData() {
@@ -51,6 +52,7 @@ public class Matrix {
         }
 
     }
+
     public double[][] getMatrix() {
         assignNumberValueToKey();
         double[][] matrix = new double[1000][4];
@@ -63,30 +65,33 @@ public class Matrix {
         return matrix;
     }
 
-    public double [][] getSimilarity(){
+    public double[][] getSimilarity() {
         assignNumberValueToKey();
         double[][] matrix = new double[1000][1000];
-        double similarity =0;
-        double temp =0;
-        for(int i =1;i<1000;i++){
-            for (int j =1;j<1000;j++) {
+        double similarity = 0;
+        double dissimilarity = 0;
+        double temp = 0;
+        for (int i = 1; i < 1000; i++) {
+            for (int j = 1; j < 1000; j++) {
                 for (int k = 0; k < 4; k++) {
                     if (j == dataArr.length + 1) {
 
                     } else {
                         double subtractObjects = (map.get(dataArr[i][k]) - map.get(dataArr[j][k]));
 
-                            temp = (.25) * subtractObjects;
+                        temp = (.25) * subtractObjects;
 
 
-                        similarity = +temp;
+                        dissimilarity = +temp;
 
                     }
 
                 }
+
                 DecimalFormat df = new DecimalFormat(("#.00"));
-                similarity = Double.parseDouble(df.format(similarity));
-                matrix[i][j] = Math.abs(similarity);
+                similarity = Double.parseDouble(df.format(dissimilarity));
+
+                matrix[i][j] = 1 - Math.abs(similarity);
             }
 
         }
@@ -107,6 +112,7 @@ public class Matrix {
 
         return matrix;
     }
+
     public void assignNumberValueToKey() {
         keyValueArray = new ArrayList<String>();
         double count = 0;
@@ -181,7 +187,9 @@ public class Matrix {
                 dataArr[i][j].equals("NON-CRIMINAL (SUBJECT SPECIFIED)") ||
                 dataArr[i][j].equals("STALKING ")
                 ||
-                dataArr[i][j].equals("PUBLIC PEACE VIOLATION"))) {
+                dataArr[i][j].equals("PUBLIC PEACE VIOLATION")))
+        {
+
             map.put(dataArr[i][j], 1.0);
         }
         if (j == 0 && (dataArr[i][j].equals("THEFT")
@@ -189,7 +197,8 @@ public class Matrix {
                 dataArr[i][j].equals("CRIMINAL TRESPASS") ||
                 dataArr[i][j].equals("DECEPTIVE PRACTICE")
                 ||
-                dataArr[i][j].equals("INTIMIDATION"))) {
+                dataArr[i][j].equals("INTIMIDATION")))
+        {
 
             map.put(dataArr[i][j], 2.0);
         }
@@ -198,7 +207,8 @@ public class Matrix {
                 dataArr[i][j].equals("INTERFERENCE WITH PUBLIC OFFICER") ||
                 dataArr[i][j].equals("WEAPONS VIOLATION")
                 ||
-                dataArr[i][j].equals("BATTERY"))) {
+                dataArr[i][j].equals("BATTERY")))
+        {
             map.put(dataArr[i][j], 3.0);
         }
         if (j == 0 && (dataArr[i][j].equals("ARSON")
@@ -206,7 +216,8 @@ public class Matrix {
                 dataArr[i][j].equals("ROBBERY") ||
                 dataArr[i][j].equals("MOTOR VEHICLE THEFT")
                 ||
-                dataArr[i][j].equals("CRIM SEXUAL ASSAULT"))) {
+                dataArr[i][j].equals("CRIM SEXUAL ASSAULT")))
+        {
             map.put(dataArr[i][j], 4.0);
         }
         if (j == 0 && (dataArr[i][j].equals("ASSAULT")
@@ -223,8 +234,8 @@ public class Matrix {
 
 
     public void printCSV2(double[][] array) throws IOException {
-        BufferedWriter br = new BufferedWriter(new FileWriter("CSV2.csv"));
-        StringBuilder sb = new StringBuilder();
+        br = new BufferedWriter(new FileWriter("CSV2.csv"));
+        sb = new StringBuilder();
         for (int i = 1; i < 1000; i++) {
             for (int j = 0; j < 4; j++) {
                 System.out.print(array[i][j] + ", ");
@@ -243,8 +254,8 @@ public class Matrix {
 
     public void printCSV1(String[][] array) throws IOException {
 
-        BufferedWriter br = new BufferedWriter(new FileWriter("CSV1.csv"));
-        StringBuilder sb = new StringBuilder();
+        br = new BufferedWriter(new FileWriter("CSV1.csv"));
+        sb = new StringBuilder();
 
         for (int i = 1; i < 1000; i++) {
             for (int j = 0; j < 4; j++) {
@@ -263,8 +274,8 @@ public class Matrix {
     }
 
     public void printCSV3(double[][] array) throws IOException {
-        BufferedWriter br = new BufferedWriter(new FileWriter("CSV3.csv"));
-        StringBuilder sb = new StringBuilder();
+        br = new BufferedWriter(new FileWriter("CSV3.csv"));
+        sb = new StringBuilder();
         for (int i = 1; i < 1000; i++) {
             for (int j = 1; j < 1000; j++) {
                 System.out.print(array[i][j] + ", ");
