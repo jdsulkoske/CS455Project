@@ -38,8 +38,8 @@ public class Matrix {
             dataArr = new String[list.size()][];
             dataArr = list.toArray(dataArr);
             printCSV1(randomMatrix());
-            printCSV2(getMatrix());
-            printCSV3(getSimilarity());
+            printCSV2(getCSV2Matrix());
+            printCSV3(getSimilarityMatrix());
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -52,8 +52,20 @@ public class Matrix {
         }
 
     }
+    private String[][] randomMatrix() {
+        String[][] matrix = new String[1000][4];
+        Random rand = new Random();
+        for (int i = 0; i < 1000; i++) {
+            for (int j = 0; j < 4; j++) {
+                Integer r = rand.nextInt(dataArr.length);
+                matrix[i][j] = dataArr[r][j];
+            }
 
-    public double[][] getMatrix() {
+        }
+
+        return matrix;
+    }
+    private double[][] getCSV2Matrix() {
         assignNumberValueToKey();
         double[][] matrix = new double[1000][4];
         for (int i = 1; i < 1000; i++) {
@@ -65,7 +77,7 @@ public class Matrix {
         return matrix;
     }
 
-    public double[][] getSimilarity() {
+    private double[][] getSimilarityMatrix() {
         assignNumberValueToKey();
         double[][] matrix = new double[1000][1000];
         double similarity = 0;
@@ -99,21 +111,9 @@ public class Matrix {
     }
 
 
-    public String[][] randomMatrix() {
-        String[][] matrix = new String[1000][4];
-        Random rand = new Random();
-        for (int i = 0; i < 1000; i++) {
-            for (int j = 0; j < 4; j++) {
-                Integer r = rand.nextInt(dataArr.length);
-                matrix[i][j] = dataArr[r][j];
-            }
 
-        }
 
-        return matrix;
-    }
-
-    public void assignNumberValueToKey() {
+    private void assignNumberValueToKey() {
         keyValueArray = new ArrayList<String>();
         double count = 0;
         int min = getMin();
@@ -153,7 +153,7 @@ public class Matrix {
 
     }
 
-    public int getMax() {
+    private int getMax() {
         int max = 0;
         for (int i = 1; i < dataArr.length; i++) {
             for (int j = 0; j < 4; j++) {
@@ -166,7 +166,7 @@ public class Matrix {
         return max;
     }
 
-    public int getMin() {
+    private int getMin() {
         int min = Integer.parseInt(dataArr[1][3]);
         for (int i = 1; i < dataArr.length; i++) {
             for (int j = 0; j < 4; j++) {
@@ -231,28 +231,7 @@ public class Matrix {
             map.put(dataArr[i][j], map.get(dataArr[i][j]));
         }
     }
-
-
-    public void printCSV2(double[][] array) throws IOException {
-        br = new BufferedWriter(new FileWriter("CSV2.csv"));
-        sb = new StringBuilder();
-        for (int i = 1; i < 1000; i++) {
-            for (int j = 0; j < 4; j++) {
-                System.out.print(array[i][j] + ", ");
-                sb.append(array[i][j]);
-                sb.append(",");
-
-            }
-            sb.append("\n");
-            System.out.println();
-
-        }
-        br.write(sb.toString());
-        br.close();
-
-    }
-
-    public void printCSV1(String[][] array) throws IOException {
+    private void printCSV1(String[][] array) throws IOException {
 
         br = new BufferedWriter(new FileWriter("CSV1.csv"));
         sb = new StringBuilder();
@@ -273,7 +252,28 @@ public class Matrix {
 
     }
 
-    public void printCSV3(double[][] array) throws IOException {
+    private void printCSV2(double[][] array) throws IOException {
+        br = new BufferedWriter(new FileWriter("CSV2.csv"));
+        sb = new StringBuilder();
+        for (int i = 1; i < 1000; i++) {
+            for (int j = 0; j < 4; j++) {
+                System.out.print(array[i][j] + ", ");
+                sb.append(array[i][j]);
+                sb.append(",");
+
+            }
+            sb.append("\n");
+            System.out.println();
+
+        }
+        br.write(sb.toString());
+        br.close();
+
+    }
+
+
+
+    private void printCSV3(double[][] array) throws IOException {
         br = new BufferedWriter(new FileWriter("CSV3.csv"));
         sb = new StringBuilder();
         for (int i = 1; i < 1000; i++) {
