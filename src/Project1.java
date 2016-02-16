@@ -9,7 +9,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class FileRead {
+public class Project1 {
 
 
     private ArrayList<String> csvDataArray = new ArrayList<String>();
@@ -22,7 +22,7 @@ public class FileRead {
     private ArrayList<String> keyValueArray;
 
     public static void main(String[] args) {
-        FileRead data = new FileRead();
+        Project1 data = new Project1();
         data.parseData("Case beat", 3);
         System.out.println();
         data.parseData("Community Area", 4);

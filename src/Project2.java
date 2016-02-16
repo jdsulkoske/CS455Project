@@ -10,7 +10,7 @@ import java.util.*;
 /**
  * Created by FarisShatat on 2/9/16.
  */
-public class Matrix {
+public class Project2 {
 
     private ArrayList<String> csvDataArray = new ArrayList<String>();
     private ArrayList newArray = new ArrayList();
@@ -21,7 +21,7 @@ public class Matrix {
     private StringBuilder sb;
 
     public static void main(String[] args) {
-        Matrix data = new Matrix();
+        Project2 data = new Project2();
         data.parseData();
         System.out.println();
     }
