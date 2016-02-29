@@ -14,7 +14,7 @@ public class Project3 {
     private int nextIndex2;
     private int nextIndex1;
 
-    int noOfItems;
+
     double[][] dataItems;
     double[][] cz;
     double[][] oldCz;
