@@ -2,6 +2,7 @@ import au.com.bytecode.opencsv.CSVReader;
 
 import java.io.BufferedWriter;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -35,6 +36,7 @@ public class Project3 {
     private ArrayList<double[][]> newArray;
     private int iteration;
     private int numberOfClusters;
+    private int dataset;
 
 
     public static void main(String[] args) throws IOException {
@@ -51,7 +53,9 @@ public class Project3 {
     private void formCluster() throws IOException {
 
         Scanner input = new Scanner(System.in);
-        System.out.println("Enter Value of K");
+        System.out.println("Type 1 for Chicago Crime Dataset or Type 2 for Weka dataset");
+        dataset = input.nextInt();
+        System.out.println("Enter Value of Clusters");
         numberOfClusters = input.nextInt();
 
 
@@ -96,13 +100,23 @@ public class Project3 {
 
     private void loadInData() throws IOException {
         CSVReader bufferReader = null;
-        bufferReader = new CSVReader(new FileReader("src/Crimes_-_2016.csv"));
+        if(dataset==1) {
+            bufferReader = new CSVReader(new FileReader("src/CSV2.csv"));
+        }
+        if(dataset==2){
+            bufferReader = new CSVReader(new FileReader("src/weka.csv"));
+
+        }
+        else{
+            System.out.println("Please type 1 or 2 for the preferred datset");
+        }
         List<String[]> list = bufferReader.readAll();
+
         dataArr = new String[list.size()][];
         dataArr = list.toArray(dataArr);
     }
 
-    private void printNewCenterValue() {
+    private void printNewCenterValue() throws IOException {
         for (int i = 0; i < cz.length; i++) {
             System.out.print("New C" + (i + 1) + " ");
             for (int j = 0; j < 4; j++) {
@@ -113,33 +127,58 @@ public class Project3 {
         }
     }
 
-    private void printFinalResults(int iter) {
+    private void printFinalResults(int iter) throws IOException {
+        if(dataset==1) {
+            br = new BufferedWriter(new FileWriter("CrimeClusterResults.csv"));
+        }
+        if(dataset==2){
+            br = new BufferedWriter(new FileWriter("WekaClusterResults.csv"));
+        }
+
+        sb = new StringBuilder();
         for (int i = 0; i < groups.size(); i++) {
-
-            System.out.println("Group " + (i + 1));
-            for(int j=0;j<groups.get(i).length;j++) {
-                for(int k=0;k<4;k++) {
-                    //System.out.println(Arrays.deepToString(groups.get(i)));
-
-                    System.out.print(groups.get(i)[j][k]+" , ");
-
-
-                }
-                System.out.print(" Center " + (i+1));
-                System.out.println();
-            }
             if (i == 0) {
-                System.out.println("Group size " + (i + 1) + " " + nextIndex1);
+                System.out.println("Cluster " + (i + 1) +  " size " +" " + nextIndex1);
             }
             if (i == 1) {
-                System.out.println("Group size " + (i + 1) + " " + nextIndex2);
+                System.out.println("Cluster " + (i + 1) +  " size " + " " + nextIndex2);
             }
             if(i==2){
-                System.out.println("Group size " + (i + 1) + " " + nextIndex3);
+                System.out.println("Cluster " + (i + 1) +  " size " +" " + nextIndex3);
 
             }
+            System.out.println("Cluster " + (i + 1));
+            for(int j=0;j<groups.get(i).length;j++) {
+                for(int k=0;k<4;k++) {
+                    if(groups.get(i)[j][0]==0.0 &&groups.get(i)[j][1]==0.0 && groups.get(i)[j][2]==0.0 &&groups.get(i)[j][3]==0.0){
+                            //do nothing
+                    }
+                    else {
+                        System.out.print(groups.get(i)[j][k] + " , ");
+                        sb.append(groups.get(i)[j][k]);
+                        sb.append(",");
+                    }
+
+                }
+                if(groups.get(i)[j][0]==0.0 &&groups.get(i)[j][1]==0.0 && groups.get(i)[j][2]==0.0 &&groups.get(i)[j][3]==0.0){
+                        //do nothing
+                }
+                else {
+                    sb.append("Cluster" + (i + 1));
+                    sb.append("\n");
+                    System.out.print(" Cluster " + (i+1));
+                    System.out.println();
+                }
+
+//                sb.append(" Cluster "+(i+1));
+            }
+
+            sb.append("\n\n");
+
 
         }
+        br.write(sb.toString());
+        br.close();
         System.out.println("Number of Itrations: " + iter);
     }
 
@@ -262,7 +301,7 @@ public class Project3 {
     public double average(double[][] list, int j) {
         double sum = 0;
         double[][] newList = new double[1][4];
-        int length = 0;
+        int length = 1;
         if (list == groups.get(0)) {
             length = nextIndex1;
 
@@ -286,11 +325,10 @@ public class Project3 {
     }
 
     private double[][] getCSV2Matrix() {
-        assignNumberValueToKey();
         double[][] matrix = new double[dataArr.length][4];
         for (int i = 1; i < dataArr.length; i++) {
             for (int j = 0; j < 4; j++) {
-                matrix[i][j] = map.get(dataArr[i][j]);
+                matrix[i][j] = Double.valueOf(dataArr[i][j]);
             }
         }
 
@@ -298,118 +336,4 @@ public class Project3 {
     }
 
 
-    private void assignNumberValueToKey() {
-        keyValueArray = new ArrayList<String>();
-        double count = 0;
-        int min = getMin();
-        int max = getMax();
-        for (int i = 1; i < dataArr.length; i++) {
-            for (int j = 0; j < 4; j++) {
-                if (map.containsKey(dataArr[i][j])) {
-                    if (j == 3) {
-                        double s = (Integer.valueOf(dataArr[i][j]) - min);
-                        double normalize = (Double.valueOf(dataArr[i][j]) - min) / (max - min);
-                        DecimalFormat df = new DecimalFormat(("#.00"));
-                        normalize = Double.parseDouble(df.format(normalize));
-                        map.put(dataArr[i][j], normalize);
-                    }
-
-                    if (dataArr[i][j].equals("TRUE")) {
-                        map.put(dataArr[i][j], 1.0);
-
-                    }
-                    if (dataArr[i][j].equals("FALSE")) {
-                        map.put(dataArr[i][j], 0.0);
-
-                    } else {
-                        checkAndConvertCategoricalAttributeToNumberValue(i, j);
-                    }
-                } else {
-                    map.put(dataArr[i][j], count++);
-
-                }
-            }
-
-
-        }
-        for (Object k : map.keySet()) {
-            keyValueArray.add((String) k);
-        }
-
-    }
-
-    private int getMax() {
-        int max = 0;
-        for (int i = 1; i < dataArr.length; i++) {
-            for (int j = 0; j < 4; j++) {
-                int number = Integer.parseInt(dataArr[i][3]);
-                if (number > max) {
-                    max = number;
-                }
-            }
-        }
-        return max;
-    }
-
-    private int getMin() {
-        int min = Integer.parseInt(dataArr[1][3]);
-        for (int i = 1; i < dataArr.length; i++) {
-            for (int j = 0; j < 4; j++) {
-                int number = Integer.parseInt(dataArr[i][3]);
-                if (number < min) {
-                    min = number;
-                }
-            }
-        }
-        return min;
-
-
-    }
-
-    private void checkAndConvertCategoricalAttributeToNumberValue(int i, int j) {
-        if (j == 0 && (dataArr[i][j].equals("LIQUOR LAW VIOLATION")
-                || dataArr[i][j].equals("OTHER OFFENSE") ||
-                dataArr[i][j].equals("NON-CRIMINAL (SUBJECT SPECIFIED)") ||
-                dataArr[i][j].equals("STALKING ")
-                ||
-                dataArr[i][j].equals("PUBLIC PEACE VIOLATION"))) {
-
-            map.put(dataArr[i][j], 1.0);
-        }
-        if (j == 0 && (dataArr[i][j].equals("THEFT")
-                || dataArr[i][j].equals("BURGLARY") ||
-                dataArr[i][j].equals("CRIMINAL TRESPASS") ||
-                dataArr[i][j].equals("DECEPTIVE PRACTICE")
-                ||
-                dataArr[i][j].equals("INTIMIDATION"))) {
-
-            map.put(dataArr[i][j], 2.0);
-        }
-        if (j == 0 && (dataArr[i][j].equals("NARCOTICS")
-                || dataArr[i][j].equals("CRIMINAL DAMAGE") ||
-                dataArr[i][j].equals("INTERFERENCE WITH PUBLIC OFFICER") ||
-                dataArr[i][j].equals("WEAPONS VIOLATION")
-                ||
-                dataArr[i][j].equals("BATTERY"))) {
-            map.put(dataArr[i][j], 3.0);
-        }
-        if (j == 0 && (dataArr[i][j].equals("ARSON")
-                || dataArr[i][j].equals("PROSTITUTION") ||
-                dataArr[i][j].equals("ROBBERY") ||
-                dataArr[i][j].equals("MOTOR VEHICLE THEFT")
-                ||
-                dataArr[i][j].equals("CRIM SEXUAL ASSAULT"))) {
-            map.put(dataArr[i][j], 4.0);
-        }
-        if (j == 0 && (dataArr[i][j].equals("ASSAULT")
-                || dataArr[i][j].equals("OFFENSE INVOLVING CHILDREN") ||
-                dataArr[i][j].equals("SEX OFFENSE") ||
-                dataArr[i][j].equals("KIDNAPPING")
-                ||
-                dataArr[i][j].equals("HOMICIDE"))) {
-            map.put(dataArr[i][j], 5.0);
-        } else {
-            map.put(dataArr[i][j], map.get(dataArr[i][j]));
-        }
-    }
 }
