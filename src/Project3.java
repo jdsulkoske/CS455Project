@@ -17,26 +17,23 @@ public class Project3 {
 
 
     double[][] dataItems;
-    double[][] cz;
-    double[][] oldCz;
-    ArrayList<Double> row;
-    ArrayList<double[][]> groups;
-    Scanner input;
-
-    Map<String, Double> map = new HashMap<String, Double>();
-    private ArrayList<String> keyValueArray;
+    double[][] newCenter;
+    double[][] oldCenter;
+    ArrayList<Double> centerSimilarityList;
+    ArrayList<double[][]> clusters;
 
     private String[][] dataArr;
 
     private BufferedWriter br;
     private StringBuilder sb;
-    private ArrayList<double[][]> matrix;
+
 
     private boolean same = false;
-    private ArrayList<double[][]> newArray;
+
     private int iteration;
     private int numberOfClusters;
     private int dataset;
+    private DecimalFormat df;
 
 
     public static void main(String[] args) throws IOException {
@@ -57,19 +54,14 @@ public class Project3 {
         dataset = input.nextInt();
         System.out.println("Enter Value of Clusters");
         numberOfClusters = input.nextInt();
-
-
         dataItems = new double[10000][4];
-        cz = new double[numberOfClusters][4];
-        oldCz = new double[numberOfClusters][4];
-        row = new ArrayList<Double>();
-        groups = new ArrayList<double[][]>();
-        newArray = new ArrayList<double[][]>();
+        newCenter = new double[numberOfClusters][4];
+        oldCenter = new double[numberOfClusters][4];
+        centerSimilarityList = new ArrayList<Double>();
+        clusters = new ArrayList<double[][]>();
 
         loadInData();
-        matrix = new ArrayList<double[][]>();
-
-        dataItems = getCSV2Matrix();
+         dataItems = getCSV2Matrix();
         assignRandomPoint(numberOfClusters);
         iteration = 0;
 
@@ -86,14 +78,12 @@ public class Project3 {
     }
 
     private boolean checkIfCenterChanged() {
-        if (cz[0][0] == oldCz[0][0] && cz[1][0] == oldCz[1][0]) {
-            System.out.println("New Center for 2: " + cz[0][1]);
-            System.out.println("Old Center for 1: " + oldCz[0][1]);
+        if (newCenter[0][0] == oldCenter[0][0] && newCenter[1][0] == oldCenter[1][0]) {
             return true;
 
         } else {
-            groups.clear();
-            newArray.clear();
+            clusters.clear();
+            //newArray.clear();
         }
         return false;
     }
@@ -107,9 +97,7 @@ public class Project3 {
             bufferReader = new CSVReader(new FileReader("src/weka.csv"));
 
         }
-        else{
-            System.out.println("Please type 1 or 2 for the preferred datset");
-        }
+
         List<String[]> list = bufferReader.readAll();
 
         dataArr = new String[list.size()][];
@@ -117,14 +105,15 @@ public class Project3 {
     }
 
     private void printNewCenterValue() throws IOException {
-        for (int i = 0; i < cz.length; i++) {
-            System.out.print("New C" + (i + 1) + " ");
+        for (int i = 0; i < newCenter.length; i++) {
+            System.out.print("New Center" + (i + 1) + " : ");
             for (int j = 0; j < 4; j++) {
 
-                System.out.print(", " + cz[i][j]);
+                System.out.print(df.format(newCenter[i][j]) + " , ");
             }
             System.out.println();
         }
+        System.out.println();
     }
 
     private void printFinalResults(int iter) throws IOException {
@@ -136,31 +125,36 @@ public class Project3 {
         }
 
         sb = new StringBuilder();
-        for (int i = 0; i < groups.size(); i++) {
+        for (int i = 0; i < clusters.size(); i++) {
             if (i == 0) {
                 System.out.println("Cluster " + (i + 1) +  " size " +" " + nextIndex1);
+                sb.append("Cluster " + (i + 1) +  " size " +" " + nextIndex1 + "\n\n");
             }
             if (i == 1) {
                 System.out.println("Cluster " + (i + 1) +  " size " + " " + nextIndex2);
+                sb.append("Cluster " + (i + 1) +  " size " +" " + nextIndex2+ "\n\n");
+
             }
             if(i==2){
                 System.out.println("Cluster " + (i + 1) +  " size " +" " + nextIndex3);
+                sb.append("Cluster " + (i + 1) +  " size " +" " + nextIndex3+ "\n\n");
+
 
             }
             System.out.println("Cluster " + (i + 1));
-            for(int j=0;j<groups.get(i).length;j++) {
+            for(int j = 0; j< clusters.get(i).length; j++) {
                 for(int k=0;k<4;k++) {
-                    if(groups.get(i)[j][0]==0.0 &&groups.get(i)[j][1]==0.0 && groups.get(i)[j][2]==0.0 &&groups.get(i)[j][3]==0.0){
+                    if(clusters.get(i)[j][0]==0.0 && clusters.get(i)[j][1]==0.0 && clusters.get(i)[j][2]==0.0 && clusters.get(i)[j][3]==0.0){
                             //do nothing
                     }
                     else {
-                        System.out.print(groups.get(i)[j][k] + " , ");
-                        sb.append(groups.get(i)[j][k]);
+                        System.out.print(clusters.get(i)[j][k] + " , ");
+                        sb.append(clusters.get(i)[j][k]);
                         sb.append(",");
                     }
 
                 }
-                if(groups.get(i)[j][0]==0.0 &&groups.get(i)[j][1]==0.0 && groups.get(i)[j][2]==0.0 &&groups.get(i)[j][3]==0.0){
+                if(clusters.get(i)[j][0]==0.0 && clusters.get(i)[j][1]==0.0 && clusters.get(i)[j][2]==0.0 && clusters.get(i)[j][3]==0.0){
                         //do nothing
                 }
                 else {
@@ -187,7 +181,7 @@ public class Project3 {
         nextIndex2 = 0;
         nextIndex3 = 0;
         for (int i = 1; i < dataItems.length; i++) {
-            row.clear();
+            centerSimilarityList.clear();
             findDistance(dataItems[i]);
 
             assignIndexToClosestCentroid(i);
@@ -195,17 +189,16 @@ public class Project3 {
             incrementIndex();
 
         }
-
-        row.removeAll(row);
+        centerSimilarityList.removeAll(centerSimilarityList);
         assignNewCenter();
     }
 
     private void assignNewCenter() {
         for (int i = 0; i < numberOfClusters; i++) {
             for (int j = 0; j < 4; j++) {
-                oldCz[i][j] = cz[i][j];
-                if (groups.get(i)[i] != null) {
-                    cz[i][j] = average(groups.get(i), j);
+                oldCenter[i][j] = newCenter[i][j];
+                if (clusters.get(i)[i] != null) {
+                    newCenter[i][j] = average(clusters.get(i), j);
 
                 }
 
@@ -214,21 +207,21 @@ public class Project3 {
     }
 
     private void incrementIndex() {
-        if (row.indexOf(Collections.min(row)) == 0) {
-            if (nextIndex1 != groups.get(0).length - 1 && !(nextIndex1 >= 10000)) {
+        if (centerSimilarityList.indexOf(Collections.min(centerSimilarityList)) == 0) {
+            if (nextIndex1 != clusters.get(0).length - 1 && !(nextIndex1 >= 10000)) {
                 ++nextIndex1;
             }
 
         }
 
-        if (row.indexOf(Collections.min(row)) == 1) {
-            if (nextIndex2 != groups.get(1).length - 1 && !(nextIndex2 >= 10000)) {
+        if (centerSimilarityList.indexOf(Collections.min(centerSimilarityList)) == 1) {
+            if (nextIndex2 != clusters.get(1).length - 1 && !(nextIndex2 >= 10000)) {
                 ++nextIndex2;
             }
 
         }
-        if (row.indexOf(Collections.min(row)) == 2) {
-            if (nextIndex3 != groups.get(1).length - 1 && !(nextIndex3 >= 10000)) {
+        if (centerSimilarityList.indexOf(Collections.min(centerSimilarityList)) == 2) {
+            if (nextIndex3 != clusters.get(1).length - 1 && !(nextIndex3 >= 10000)) {
                 ++nextIndex3;
             }
         }
@@ -237,45 +230,43 @@ public class Project3 {
     private void assignIndexToClosestCentroid(int i) {
         for (int j = 0; j < 4; j++) {
 
-            if (row.indexOf(Collections.min(row)) == 0) {
-                groups.get(row.indexOf(Collections.min(row)))[nextIndex1][j] = dataItems[i][j];
+            if (centerSimilarityList.indexOf(Collections.min(centerSimilarityList)) == 0) {
+                clusters.get(centerSimilarityList.indexOf(Collections.min(centerSimilarityList)))[nextIndex1][j] = dataItems[i][j];
 
             }
 
-            if (row.indexOf(Collections.min(row)) == 1) {
+            if (centerSimilarityList.indexOf(Collections.min(centerSimilarityList)) == 1) {
 
-                groups.get(row.indexOf(Collections.min(row)))[nextIndex2][j] = dataItems[i][j];
+                clusters.get(centerSimilarityList.indexOf(Collections.min(centerSimilarityList)))[nextIndex2][j] = dataItems[i][j];
 
             }
-            if (row.indexOf(Collections.min(row)) == 2) {
-                groups.get(row.indexOf(Collections.min(row)))[nextIndex3][j] = dataItems[i][j];
+            if (centerSimilarityList.indexOf(Collections.min(centerSimilarityList)) == 2) {
+                clusters.get(centerSimilarityList.indexOf(Collections.min(centerSimilarityList)))[nextIndex3][j] = dataItems[i][j];
             }
         }
     }
 
     private void findDistance(double[] dataItem) {
-        double dissimilarity = 0;
-        for (int l = 0; l < cz.length; l++) {
+        double dissimilarity = 1;
+        for (int l = 0; l < newCenter.length; l++) {
 
             for (int j = 0; j < 4; j++) {
-
-//                       double subtractObjects = (abs(cz[l][j] - dataItems[i][j]));
-                double temp = (abs(cz[l][j] - dataItem[j]));
+                double subtractObjects = (abs(newCenter[l][j] - dataItem[j]));
+                double temp = (.25) * subtractObjects;
                 dissimilarity = +temp;
 
             }
 
-            DecimalFormat df = new DecimalFormat(("#.00"));
-            double similarity = Double.parseDouble(df.format(dissimilarity));
-
-            row.add(abs(similarity));
+            double similarity = Double.parseDouble(String.valueOf(dissimilarity));
+            df = new DecimalFormat(("#.00"));
+            centerSimilarityList.add(Double.valueOf(df.format(abs(similarity))));
         }
 
     }
 
     private void createNewCluster() {
         for (int i = 0; i < numberOfClusters; i++) {
-            groups.add(new double[dataArr.length][4]);
+            clusters.add(new double[dataArr.length][4]);
 
         }
     }
@@ -285,16 +276,18 @@ public class Project3 {
             Random r = new Random();
             int random = r.nextInt(dataArr.length - 1);
             if (i < k) {
-                System.out.print("C" + (i + 1) + " is ");
+                System.out.print("Random Center" + (i + 1) + " is ");
                 for (int j = 0; j < 4; j++) {
-                    cz[i][j] = (dataItems[random][j]);
+                    newCenter[i][j] = (dataItems[random][j]);
 
-                    System.out.print(" , " + cz[i][j]);
+
+                    System.out.print(" , " + newCenter[i][j]);
                 }
                 System.out.println();
             }
 
         }
+        System.out.println();
     }
 
 
@@ -302,17 +295,17 @@ public class Project3 {
         double sum = 0;
         double[][] newList = new double[1][4];
         int length = 1;
-        if (list == groups.get(0)) {
+        if (list == clusters.get(0)) {
             length = nextIndex1;
 
         }
-        if (list == groups.get(1)) {
+        if (list == clusters.get(1)) {
             length = nextIndex2;
 
 
         }
-        if(groups.size()==3) {
-            if (list == groups.get(2)) {
+        if(clusters.size()==3) {
+            if (list == clusters.get(2)) {
                 length = nextIndex3;
             }
         }
