@@ -29,10 +29,7 @@ public class Project4 {
     public Project4() throws IOException {
 
         loadInData();
-        dataItems = getCSV2Matrix();
-        //classify();
-        //classifiedMatrix = newMatrix();
-        //printCSV2();
+        dataItems = generateMatrix();
         findFrequency();
     }
 
@@ -49,7 +46,7 @@ public class Project4 {
 
     }
 
-    private String[][] getCSV2Matrix() {
+    private String[][] generateMatrix() {
         String[][] matrix = new String[100][5];
         for (int i = 0; i < 100; i++) {
             for (int j = 0; j < 5; j++) {
@@ -62,141 +59,106 @@ public class Project4 {
         return matrix;
     }
 
-//    private void classify() {
-//        int count1 = 0;
-//        int count2 = 0;
-//        for (int i = 0; i < dataItems.length; i++) {
-//            for (int j = 0; j < 3; j++) {
-//                if (dataItems[i][j].contains("ASSAULT") | dataItems[i][j].contains("BATTERY")) {
-//                    System.out.println(i + " " + dataItems[i][j]);
-//                    classLabel.add(i,"Yes");
-//                    count1++;
-//                    j=2;
-//                } else {
-//                    count2++;
-//                    j=2;
-//                    classLabel.add(i,"No");
-//                }
-//            }
-//
-//        }
-//        System.out.println(count1);
-//        System.out.println(count2);
-//    }
 
     public void findFrequency() {
         keyValueArray = new ArrayList<String>();
-        ArrayList<String> countValueArray = new ArrayList<String>();
-        ArrayList<Double> resultArray = new ArrayList<>();
+        int numberOfTimesTrue;
+        int numberOfTimesFalse;
+        double temp = 0;
+        double informationGained = 0;
+        int rootAttribute = 0;
 
-        for(int l =0;l<5;l++) {
+        for (int l = 0; l < 5; l++) {
+            numberOfTimesTrue = 0;
+            numberOfTimesFalse = 0;
             for (int i = 1; i < dataItems.length; i++) {
                 if (l != 2) {
                     if (dataItems[i][2].equals("TRUE")) {
                         if (map.containsKey(dataItems[i][l] + " is True")) {
                             map.put(dataItems[i][l] + " is True", map.get(dataItems[i][l] + " is True") + 1);
+                            numberOfTimesTrue++;
 
                         } else {
                             map.put(dataItems[i][l] + " is True", 1);
+                            numberOfTimesTrue++;
 
                         }
                     } else if (dataItems[i][2].equals("FALSE")) {
                         if (map.containsKey(dataItems[i][l] + " is False")) {
                             map.put(dataItems[i][l] + " is False", map.get(dataItems[i][l] + " is False") + 1);
+                            numberOfTimesFalse++;
 
                         } else {
                             map.put(dataItems[i][l] + " is False", 1);
+                            numberOfTimesFalse++;
 
 
                         }
                     }
-                }
 
+                }
 
             }
             for (Object k : map.keySet()) {
                 keyValueArray.add((String) k);
-                Collections.sort(keyValueArray);
+
             }
-            double results = 0;
-            double size = 0;
-            for (int j = 0; j < keyValueArray.size(); j += 2) {
-                if (j != keyValueArray.size() - 1) {
-                    double value = map.get(keyValueArray.get(j));
-                    double a = map.get(keyValueArray.get(j + 1));
-                    size = value + a;
+            Collections.sort(keyValueArray);
+            double entropy = calculateInformationGain();
+            System.out.println(entropy);
+            double overalResults = getEntropy(numberOfTimesTrue, numberOfTimesFalse);
+            // System.out.println(overalResults);
 
-                    double calc = -(Math.log(value / size) / Math.log(2) * (value / size));
-                    double t = -(Math.log(a / size) / Math.log(2)) * (a / size);
-                    double r = calc + t;
-                    //System.out.println(size);
-                    double csize = size / dataItems.length;
-                    //System.out.println(csize);
-                    double p = csize * r;
-                    //System.out.println(p);
-                    results = +p;
-
-
-                }
-
-                // System.out.println(a);
+            double cal = overalResults - entropy;
+            if (cal > temp) {
+                rootAttribute = l;
+                informationGained = cal;
+                temp = cal;
             }
-            System.out.println(results);
-            System.out.println(map.size());
-//            resultArray.add(results);
-//            for (int i = 0)
-//                System.out.println("Entropy 1 " + results);
-
-
-//        DecimalFormat df = new DecimalFormat(("#.00"));
-//        for (int i = 0; i < map.size(); i++) {
-//            double value = (map.get(keyValueArray.get(i)));
-//            value = (value / dataArr.length) * 100;
-//            String newValue = df.format(value);
-//
-//            //System.out.println(keyValueArray.get(i) + " is " + newValue + "%" +"; frequency: "+ map.get(keyValueArray.get(i)));
-//        }
             System.out.println("______________________________________________");
-
             map.clear();
             keyValueArray.clear();
         }
+        System.out.println("The Information gained " + informationGained);
+        System.out.println(rootAttribute);
+
     }
 
-//    private String[][] newMatrix() {
-//        String[][] matrix = new String[100][4];
-//        for (int i = 0; i < dataItems.length; i++) {
-//            for (int j = 0; j < 4; j++) {
-//                if (j == 3) {
-//                    if(i==0){
-//                        matrix[0][3]="Arrest";
-//                    }
-//                    else {
-//                        matrix[i][3] = classLabel.get(i);
-//                    }
-//                } else {
-//                    matrix[i][j] = dataItems[i][j];
-//                }
-//            }
-//        }
-//        return matrix;
-//    }
-//    private void printCSV2() throws IOException {
-//        br = new BufferedWriter(new FileWriter("Classification.csv"));
-//        sb = new StringBuilder();
-//        for (int i = 0; i < classifiedMatrix.length; i++) {
-//            for (int j = 0; j < 4; j++) {
-//                System.out.print(classifiedMatrix[i][j] + ", ");
-//                sb.append(classifiedMatrix[i][j]);
-//                sb.append(",");
-//
-//            }
-//            sb.append("\n");
-//            System.out.println();
-//
-//        }
-//        br.write(sb.toString());
-//       br.close();
-//
-//    }
+    private double calculateInformationGain() {
+        double entropy = 0;
+        double numberOfTimesCategoryOccursInDataSet = 0;
+        for (int j = 0; j < keyValueArray.size(); j += 2) {
+            if (j != keyValueArray.size() - 1) {
+                double value = map.get(keyValueArray.get(j));
+                double a = map.get(keyValueArray.get(j + 1));
+                numberOfTimesCategoryOccursInDataSet = value + a;
+
+                double truevalue = -(Math.log(value / numberOfTimesCategoryOccursInDataSet) / Math.log(2) * (value / numberOfTimesCategoryOccursInDataSet));
+                double falseValue = -(Math.log(a / numberOfTimesCategoryOccursInDataSet) / Math.log(2)) * (a / numberOfTimesCategoryOccursInDataSet);
+                double result = truevalue + falseValue;
+
+                double fractionOfASpecificCategory = numberOfTimesCategoryOccursInDataSet / dataItems.length;
+
+                double calculation = fractionOfASpecificCategory * result;
+
+                entropy = +calculation;
+
+
+            }
+
+        }
+        return entropy;
+    }
+
+    private double getEntropy(int trueVal, int falseVal) {
+        double fractionOfTrueElements = ((double) trueVal / dataItems.length);
+        double fractionOfFalseElements = ((double) falseVal / dataItems.length);
+        double trueValue = -(Math.log(fractionOfTrueElements) / Math.log(2) * (fractionOfTrueElements));
+        double falseValue = -(Math.log(fractionOfFalseElements) / Math.log(2) * (fractionOfFalseElements));
+        double results = trueValue + falseValue;
+
+        System.out.println(results);
+        return results;
+
+    }
 }
